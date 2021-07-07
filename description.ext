@@ -1,0 +1,34 @@
+
+class CfgFunctions
+{
+	class Sim
+	{
+		class run
+		{
+			class init 
+			{
+				preInit = 1;
+				//postInit = 1;
+			};
+		}
+		class utility
+		{
+			class roadCallback{};
+			class displayGraphMap{} ;
+			class makeLocationGraph{} ;
+			class graphToClipboard{} ;
+			class loadGraph{};
+		};
+		class location
+		{
+			class allLocations{};
+		};
+		class graph
+		{
+			class addLocationNode{};
+			class createGraph{};
+			class createNode{};
+			class linkExists{};
+		};
+	};
+};
