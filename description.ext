@@ -30,5 +30,12 @@ class CfgFunctions
 			class createNode{};
 			class linkExists{};
 		};
+    class groups
+    {
+      class createGroup{} ;
+      class getAllGroups{} ;
+      class getSideGroups{};
+      class assignID{} ;
+    };
 	};
 };
