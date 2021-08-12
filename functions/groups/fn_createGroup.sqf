@@ -6,8 +6,8 @@
 
 	Parameter(s):
 		1: Side to create group
-    2: Template of battle group
-    3: Chosen location to start 
+		2: Template of battle group
+		3: Starting location 
 
 	Returns:
 	BOOL
@@ -24,10 +24,11 @@ _battlegrp = BATTLEGRPVAR;
 if (!(_side in _battlegrp)) then {
   _battlegrp set[_side, createHashMap];
 }
-private _grps = _battlegrp get [_side] ; 
+private _grps = _battlegrp get _side ; 
 
 _id = [_side] call Sim_fnc_assignID ;
 
-_grps set[_id, [getLocationPos(_location), _template]];
+// 3D Position, Destination, State, Group Composition, spawned into game
+_grps set[_id, [getLocationPos(_location), locationNull, "stopped", _template, false]];
 
 true ;

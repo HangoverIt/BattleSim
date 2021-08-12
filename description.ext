@@ -10,6 +10,7 @@ class CfgFunctions
 				preInit = 1;
 				//postInit = 1;
 			};
+			class aiCtl{postInit = 1;};
 		}
 		class utility
 		{
@@ -29,13 +30,16 @@ class CfgFunctions
 			class createGraph{};
 			class createNode{};
 			class linkExists{};
+			class getGraphLocations{};
 		};
-    class groups
-    {
-      class createGroup{} ;
-      class getAllGroups{} ;
-      class getSideGroups{};
-      class assignID{} ;
-    };
+		class groups
+		{
+		  class createGroup{} ;
+		  class getAllGroups{} ;
+		  class getSideGroups{};
+		  class getGroup{};
+		  class assignID{} ;
+		  class isGroupMoving{};
+		};
 	};
 };

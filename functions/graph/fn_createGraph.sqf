@@ -8,14 +8,18 @@
 		1 (Optional): Location array (Sim locations)
 
 	Returns:
-	HashMap
+		BOOL
 */
+#include "graph.hpp"
 params[["_locations", [], []]];
 
-private _locationGraph = createHashMap ; // hash of [location _ref, list of [connected location ref, distance]]
+if (isNil SIMGRAPH) then {
+  CREATESIMGRAPH;
+};
+private_locationGraph = SIMGRAPHVAR;
 
 {
 	[_locationGraph, _x] call Sim_fnc_createNode;
 }forEach _locations;
 
-_locationGraph ;
+true ;
