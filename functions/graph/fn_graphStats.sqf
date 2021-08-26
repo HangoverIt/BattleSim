@@ -10,16 +10,17 @@
 	Returns:
 		Hashmap of locations with stat info
 */
-#include "../location/location.hpp"
+#include "..\location\location.hpp"
 _graph = SIMGRAPHVAR;
 
 private _statgraph = createHashMap ;
 
 {
-	private _location = _x ;
 	private _hm = _y ;
-	private _weight = getLocationWeight(_location);
-	private _totalconnections = {_x typeName == "ARRAY"} count _hm ; // count where key is an array
-	_weight = _weight + _totalconnections ; // how connected is the location? Increase weight for each connection
+	private _weight = _hm get "weight" ;
+	private _totalconnections = count (_hm get "paths"); // count number of paths
+	private _score = _weight + _totalconnections ; // how connected is the location? Increase weight for each connection
+	_statgraph set ["connections", _totalconnections] ;
+	_statgraph set ["score", _score];
 	
 }forEach _graph;

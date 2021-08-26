@@ -5,20 +5,26 @@
 	Create a node in the location graph
 
 	Parameter(s):
-		None
+		1 (Mandatory): Location graph
+		2 (Mandatory): Location (Sim location array)
 
 	Returns:
-	BOOL
+		Hashmap of node
 */
+#include "..\location\location.hpp"
 params["_graph", "_l"];
 
-if (!(_l in _graph)) then {
-	_graph set [_l, createHashMap] ;
+private _locationid = getLocationID(_l);
+
+if (!(_locationid in _graph)) then {
+	_graph set [_locationid, createHashMap] ;
 	
 	// Add additional information to location
-	_hm = _graph get _l ;
-	_hm set ["owner", civilian];
-	_hm set ["garrison", []];
+	_hm = _graph get _locationid ;
+	_hm set ["paths", createHashMap] ;
+
+	// Set all other parameters that the locations library looks after
+	[_hm, _l] call Sim_fnc_setLocationNode ;
 };
 
-true ;
+_graph get _locationid ;

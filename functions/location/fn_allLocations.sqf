@@ -2,13 +2,13 @@
 	Author: HangoverIt
 
 	Description:
-	Return all locations for the game. Slow execution as querying all of the world locations
+		Return all locations for the game. Slow execution as querying all of the world locations
 
 	Parameter(s):
 		None
 
 	Returns:
-	Array of game locations (not the same as Arma 3 map locations)
+		Array of game locations (not the same as Arma 3 map locations)
 */
 
 private _allLocationTypes = [];

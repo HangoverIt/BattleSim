@@ -19,10 +19,12 @@ class CfgFunctions
 			class makeLocationGraph{} ;
 			class graphToClipboard{} ;
 			class loadGraph{};
+			class displayRoute{} ;
 		};
 		class location
 		{
 			class allLocations{};
+			class setLocationNode{};
 		};
 		class graph
 		{
@@ -31,6 +33,7 @@ class CfgFunctions
 			class createNode{};
 			class linkExists{};
 			class getGraphLocations{};
+			class getShortestPath{};
 		};
 		class groups
 		{

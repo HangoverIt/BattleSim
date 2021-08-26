@@ -2,15 +2,15 @@
 	Author: HangoverIt
 
 	Description:
-	Create a new battle group
+		Return all battle groups
 
 	Parameter(s):
     None
     
 	Returns:
-    HashMap
+		HashMap
 */
-#include "groups.hpp"
+#include "..\groups\groups.hpp"
 if (isNil BATTLEGROUPS) then {
   CREATEBATTLEGRP;
 };

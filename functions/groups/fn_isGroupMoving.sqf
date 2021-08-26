@@ -10,6 +10,7 @@
 	Returns:
 		BOOL
 */
+#include "..\groups\groups.hpp"
 params["_grp"];
 
 getGroupState(_grp) == "moving";

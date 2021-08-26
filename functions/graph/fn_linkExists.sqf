@@ -12,14 +12,17 @@
 	Returns:
 	BOOL
 */
+#include "..\location\location.hpp"
 params["_graph", "_a", "_b"] ;
 
 private _ret = false ;
+private _a_id = getLocationID(_a) ;
+private _b_id = getLocationID(_b) ;
 
-if ((_a in _graph) && (_b in _graph)) then {
-	_ahash = _graph get _a ;
-	_bhash = _graph get _b ;
-	if ((_b in _ahash) && (_a in _bhash)) then {
+if ((_a_id in _graph) && (_b_id in _graph)) then {
+	private _a_paths = (_graph get _a_id) get "paths" ;
+	private _b_paths = (_graph get _b_id) get "paths" ;
+	if ((_b_id in _a_paths) && (_a_id in _b_paths)) then {
 		_ret = true ;
 	};
 };

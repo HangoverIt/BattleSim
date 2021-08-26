@@ -10,11 +10,11 @@
 	Returns:
 		BOOL
 */
-#include "graph.hpp"
+#include "..\graph\graph.hpp"
 params[["_file", "predefined\graph\altis.sqf", [""]]] ;
 
 private _fn = compile preprocessFileLineNumbers _file ;
 
-SETSIMGRAPH ([] call _fn) ;
+SETSIMGRAPH([] call _fn) ;
 
 true;

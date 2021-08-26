@@ -10,7 +10,7 @@
 	Returns:
 		bool
 */
-#include "groups.hpp"
+#include "..\groups\groups.hpp"
 while {true} do {
 	_sides = [] call Sim_fnc_getAllGroups ;
 	{
@@ -18,12 +18,9 @@ while {true} do {
 		_groups = _y ;
 		{
 			_grpid = _x ;
-			_grp = _y ;
-			if (!isSpawned(_grp)) then {
-				
-			};			
+			_grp = _y ;		
 		}forEach _groups ;
 	}forEach _sides ;
 
-	sleep 10 ;
+	sleep 100 ;
 };
