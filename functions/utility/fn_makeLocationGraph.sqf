@@ -42,7 +42,8 @@ _fn_callback = {
 	{
       // Check if close to a location
       _chk_loc_pos = _x select 1;
-      _chk_loc_size = _x select 2;
+      //_chk_loc_size = _x select 2;
+	  _chk_loc_size = 150; // don't use the locations size and instead hardcode distance
 
       if ((_chk_loc_pos distance2D _road_pos_end) <= _chk_loc_size) then {
         // This road links to _loc
@@ -76,7 +77,7 @@ _fn_callback = {
 
 {
   private _ret = [_x select 1,_fn_callback, [_x,0,[]], _x select 2] call Sim_fnc_roadCallback;
-  if (true) exitWith{} ; // Just do one location
+  //if (true) exitWith{} ; // Just do one location for testing (uncomment for actual map creation)
 }forEach _graphLocations ;
 
 if (_showmarkers) then {

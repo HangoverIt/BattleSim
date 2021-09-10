@@ -8,10 +8,13 @@
 		0 (Optional): Path to file, or defaults to a known SQF
 
 	Returns:
-	HashMap
+		BOOL
 */
+#include "..\graph\graph.hpp"
 params[["_file", "predefined\graph\altis.sqf", [""]]] ;
 
 private _fn = compile preprocessFileLineNumbers _file ;
 
-[] call _fn ;
+SETSIMGRAPH([] call _fn) ;
+
+true;

@@ -2,7 +2,8 @@
 	Author: HangoverIt
 
 	Description:
-	Return all locations for the game
+		Create a record of a location connected to a node. Creates a node for the destination location
+		if it doesn't already exist
 
 	Parameter(s):
 		1 (Mandatory): Location graph
@@ -14,25 +15,30 @@
 	Returns:
 	BOOL
 */
+#include "..\graph\graph.hpp"
+#include "..\location\location.hpp"
+
 params["_graph", "_from", "_to", "_dis", ["_path", [], [[]]]];
 
-[_graph, _from] call Sim_fnc_createNode ;
+private _node = [_graph, _from] call Sim_fnc_createNode ;
 
 // Add the record of the to destination
-_nodes = _graph get _from ;
-if (_to in _nodes) then {
-_curdis = _nodes get _to ;
-_dis = _dis min _curdis ;
+_paths = _node get "paths" ;
+if (getLocationID(_to) in _paths) then {
+	_curdis = getPathDistance(_node get getLocationID(_to)) ;
+	_dis = _dis min _curdis ; // use the shortest distance
 };
-_nodes set [_to, [_dis, _path]] ;
+_paths set [getLocationID(_to), [_dis, _path]] ;
 
 // Create the reverse record in graph
-[_graph, _to] call Sim_fnc_createNode ;
-_nodes = _graph get _to ; // get node for destination
-if (_from in _nodes) then {
-_curdis = _nodes get _from ;
-_dis = _dis min _curdis ;
+_node = [_graph, _to] call Sim_fnc_createNode ;
+_paths = _node get "paths" ; // get node for destination
+if (getLocationID(_from) in _paths) then {
+	_curdis = getPathDistance(_paths get getLocationID(_from)) ;
+	_dis = _dis min _curdis ;
 };
-_nodes set [_from, [_dis, _path]] ;
+_reversepath = +_path ;
+reverse _reversepath ;
+_paths set [getLocationID(_from), [_dis, _reversepath]] ;
 
 true ;
