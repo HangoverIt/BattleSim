@@ -12,6 +12,18 @@
 */
 params["_graph"] ;
 
+private _print_side = {
+	params ["_side"] ;
+	switch (_side) do 
+	{
+		case west: {"west"};
+		case east: {"east"} ;
+		case independent: {"independent"};
+		case civilian: {"civilian"} ;
+		default {"civilian"};
+	}
+};
+
 private _print_null = {
 	params["_o"] ;
 	switch(typeName _o) do
@@ -39,6 +51,7 @@ private _iterate_fn = {
 	{
 		case "ARRAY": {_str = "["; {_str = _str + _comma + ([_x] call _iterate_fn); _comma = ","} forEach _o;_str = _str + "]";};
 		case "HASHMAP": {_str = "createHashMapFromArray["; {_str = _str + _comma + _pretty_print + "[" + str(_x) + "," + ([_y] call _iterate_fn) + "]"; _comma = ","} forEach _o; _str = _str + "]";};
+		case "SIDE": {_str = [_o] call _print_side ;} ; 
 		default {_str = str(_o);} ;
 	};
 	_str ;

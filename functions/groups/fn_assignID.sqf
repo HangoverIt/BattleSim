@@ -15,7 +15,7 @@ _grpids = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hot
 
 _grpid = _grpids select 0 ;
 
-_grps = [] call Sim_fnc_getSideGroups;
+_grps = [_side] call Sim_fnc_getSideGroups;
 {
   if (!(_x in _grps)) exitWith {
     _grpid = _x ;

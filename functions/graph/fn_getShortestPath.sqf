@@ -9,6 +9,7 @@
 		1: Graph
 		2: Starting node ID
 		3: Destination node ID
+		4: Side of unit moving (does nothing at the moment)
 
 	Returns:
 		Mission array
@@ -17,7 +18,7 @@
 #define getNodeDistance(n) ((n) select 0)
 #define isNodeVisited(n) ((n) select 1)
 #define getPreviousNode(n) ((n) select 2)
-params["_graph", "_a", "_b"] ;
+params["_graph", "_a", "_b", ["_side", civilian]] ;
 
 // Create a copy of all nodes from graph into a data set to record visits
 private _allNodes = createHashMap;
@@ -41,7 +42,7 @@ while {_currentNodeID != _b} do{
 	_currentPrevNode = getPreviousNode(_currentNode) ;
 	// Set this node as visited 
 	_currentNode set [1, true] ;
-	diag_log format ["_currentNodeID: %1, %2. Connected to %3 paths", _currentNodeID, _currentNode, count _paths] ;
+	//diag_log format ["_currentNodeID: %1, %2. Connected to %3 paths", _currentNodeID, _currentNode, count _paths] ;
 
 	{
 		_lookAtNode = _allNodes get _x ;
@@ -56,7 +57,7 @@ while {_currentNodeID != _b} do{
 			if (getNodeDistance(_lookAtNode) == -1) then {
 				// Add new node to potential visit nodes
 				_toVisitNodes pushBack [_dis, _x];
-				diag_log format ["Adding a node %1 to visit with distance %2. Total nodes to visit %3", _x, _dis, count _toVisitNodes] ;
+				//diag_log format ["Adding a node %1 to visit with distance %2. Total nodes to visit %3", _x, _dis, count _toVisitNodes] ;
 			};
 			// Update record of node
 			_allNodes set [_x, [_dis, false, _prevNode]] ;
@@ -67,7 +68,7 @@ while {_currentNodeID != _b} do{
 	_deleteVistedAt = -1 ;
 	_smallestDis = -1; // use -1 as flag for unset distance
 	{
-		diag_log format ["Evaluating %1 with distance %2 against smallest distance %3", (_x select 1), (_x select 0), _smallestDis] ;
+		//diag_log format ["Evaluating %1 with distance %2 against smallest distance %3", (_x select 1), (_x select 0), _smallestDis] ;
 		if ((_x select 0) < _smallestDis || _smallestDis == -1) then {
 			_smallestDis = (_x select 0);
 			_currentNodeID = (_x select 1) ; // Select new node from shortest distance node in _toVisitNodes array
@@ -75,7 +76,7 @@ while {_currentNodeID != _b} do{
 		};
 	}forEach _toVisitNodes;
 	if (_deleteVistedAt > -1) then {
-		diag_log format ["Removing _toVisitNode %1 and setting to current node", _toVisitNodes select _deleteVistedAt] ;
+		//diag_log format ["Removing _toVisitNode %1 and setting to current node", _toVisitNodes select _deleteVistedAt] ;
 		_toVisitNodes deleteAt _deleteVistedAt ;
 	};
 	

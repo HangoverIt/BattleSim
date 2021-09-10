@@ -12,7 +12,8 @@
 */
 params["_side"];
 
-_battlegrp = BATTLEGRPVAR;
+private _battlegrp = [] call Sim_fnc_getAllGroups;
+
 if (!(_side in _battlegrp)) then {
   _battlegrp set[_side, createHashMap];
 };

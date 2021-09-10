@@ -8,3 +8,8 @@
 #define getGroupState(grp) (grp select 3)
 #define getGroupTemplate(grp) (grp select 4)
 #define getGroupObjects(grp) (grp select 5)
+#define getGroupPosition(grp) (grp select 6)
+#define getGroupSide(grp) (grp select 7)
+#define setGroupMission(grp,mission) (grp set[2, mission]) 
+#define setGroupPosition(grp,position) (grp set[6, position])
+#define setGroupNode(grp,nodeid) (grp set[1, nodeid])

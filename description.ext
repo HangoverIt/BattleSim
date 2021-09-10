@@ -10,7 +10,9 @@ class CfgFunctions
 				preInit = 1;
 				//postInit = 1;
 			};
-			class aiCtl{postInit = 1;};
+			class aiCtl{
+				//postInit = 1;
+			};
 		}
 		class utility
 		{
@@ -34,6 +36,7 @@ class CfgFunctions
 			class linkExists{};
 			class getGraphLocations{};
 			class getShortestPath{};
+			class findClosestPathCoord{} ;
 		};
 		class groups
 		{
@@ -43,6 +46,24 @@ class CfgFunctions
 		  class getGroup{};
 		  class assignID{} ;
 		  class isGroupMoving{};
+		  class hasMission{} ;
+		  class isNullPosition{};
+		  class getGroupPosition{};
+		};
+		class logic
+		{
+			class redeployGroups{} ;
+			class graphStats{} ;
+			class createSideStats{};
+			class getSideGraph{} ;
+			class fireNodeGroupChange{};
+			class fireGroupMoveChange{};
+			class fireMission{} ;
+		};
+		class mission
+		{
+			class createMission{};
+			class doDeployMission{};
 		};
 	};
 };
