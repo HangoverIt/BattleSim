@@ -29,11 +29,16 @@ private _sidegraph = createHashMap ;
 	if ([_side, _owner] call BIS_fnc_sideIsEnemy) then {
 		_score = 0 ; // cannot go here as enemy hold this location
 	}else{
-		// Friendly side
+		// Friendly side or other
 		if (_side == _owner) then {
 			// exactly the same side at location node
 			_score = _score - 1; // reduce the score if already captured
-		};
+		}else{
+      if (_side == civilian) then {
+        // Civilian side are attractive to capture
+        _score = _score + 1;
+      };
+    };
 	};
 	
 	// Check connections for enemy opposing units - this puts the node under threat

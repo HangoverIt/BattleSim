@@ -58,6 +58,7 @@ class CfgFunctions
 			class getSideGraph{} ;
 			class fireNodeGroupChange{};
 			class fireGroupMoveChange{};
+      class fireNodeCapture{} ;
 			class fireMission{} ;
 		};
 		class mission
