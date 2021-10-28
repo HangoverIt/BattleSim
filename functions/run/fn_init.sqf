@@ -9,3 +9,10 @@ private _locations = [] call Sim_fnc_allLocations ;
 //private _markers = [SIMGRAPHVAR, _locations, false] call Sim_fnc_makeLocationGraph;
 
 [] spawn Sim_fnc_aiCtl ;
+
+[] spawn {
+	while {true} do {
+		[west, SIMGRAPHVAR] call Sim_fnc_displaySideMap ; // temporary test
+		sleep 1;
+	};
+};

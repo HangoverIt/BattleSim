@@ -15,14 +15,15 @@
 		BOOL
 */
 #include "..\groups\groups.hpp"
+#include "..\logic\logic.hpp"
 params["_group", "_nodeId", "_arrived"];
 
 private _side = getGroupSide(_group) ;
 private _sideGraph = [_side] call Sim_fnc_getSideGraph ;
 private _node = _sideGraph get _nodeId ;
 private _score = _node get "score" ;
-_score = _score + ([1, -1] select _arrived); // Deduct one for an arriving group and add one for leaving
-_node set ["score", _score]; // Set score back into graph
+_score = _score + ([SIM_NODE_DEFENDER, -SIM_NODE_DEFENDER] select _arrived); // Deduct one for an arriving group and add one for leaving
 
+_node set ["score", _score]; // Set score back into graph
 
 // TO DO - complete the ability to fire code registered as event handlers in the BattleSim

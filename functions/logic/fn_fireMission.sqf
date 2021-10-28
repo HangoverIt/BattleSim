@@ -7,14 +7,15 @@
 
 	Parameter(s):
 		1. Group with mission
-		2. Bool, mission started
-		2. (Optional) The node ID associated with the mission
+		2. Bool, mission started (true then just started or false it has finished)
+		3. Bool, mission successful (true then completed or false and it was failed/aborted)
+		4. (Optional) The node ID associated with the mission
     
 	Returns:
 		BOOL
 */
 #include "..\groups\groups.hpp"
-params["_group", "_started", ["_nodeId", ""]];
+params["_group", "_started", "_successful", ["_nodeId", ""]];
 
 private _side = getGroupSide(_group) ;
 private _sideGraph = [_side] call Sim_fnc_getSideGraph ;

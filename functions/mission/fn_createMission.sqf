@@ -15,6 +15,9 @@
 #include "..\mission\mission.hpp"
 params["_group", "_graph", "_side"] ;
 
+private _operationalRange = 10000 ; // m
+
+private _grpNode = _graph get getGroupNode(_group) ;
 private _currentMission = getGroupMission(_group) ;
 if (count _currentMission != 0) exitWith {
 	_currentMission ; // already has a mission so just return the one set
@@ -29,10 +32,15 @@ private _sideGraph = [_side] call Sim_fnc_getSideGraph;
 // Get all scores from the side graph and order from smallest to largest (pop stack of locations)
 // Side graph needed as scores are based on preferences for each side
 //diag_log format ["Create Mission: side graph is type %1, values %2", typeName _sideGraph, _sideGraph] ;
+private _grpPos = _grpNode get "position" ;
 private _scores = [];
 {
-	//diag_log format ["Create Mission: side graph item %1, with data %2", _x,_y] ;
-	_scores pushBack [_y get "score",_x];
+	// only consider nodes with certain raidus of unit to keep movements within an operational range
+	_node = _graph get _x ;
+	if ((_node get "position" distance2D _grpPos) <= _operationalRange) then {
+		//diag_log format ["Create Mission: side graph item %1, with data %2", _x,_y] ;
+		_scores pushBack [_y get "score",_x];
+	};
 }forEach _sideGraph ;
 
 _scores sort true ; // Sort smallest to largest locations

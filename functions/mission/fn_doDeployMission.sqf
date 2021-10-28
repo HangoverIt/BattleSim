@@ -18,93 +18,137 @@ params["_group", "_graph"] ;
 
 private _min = ((1/365)/24)/60 ;
 private _exit = false ;
-private _finalTimeout = 30 * _min; // minutes
+private _abort = false ;
+private _finalTimeout = 5 * _min; // minutes
+private _captureTimeout = 1 * _min ; // minutes
 
 // Setup and resume from mission settings
 private _mission = getGroupMission(_group);
-_travelNodes = getDeployMissionNodes(_mission) ;
+private _travelNodes = getDeployMissionNodes(_mission) ;
 
 private _pathIdx = -1;
 private _path = [] ;
-diag_log format["DoDeploy: Running new mission on group %1", getGroupID(_group)] ;
+//diag_log format["DoDeploy: Running new mission on group %1", getGroupID(_group)] ;
+_idx = getDeployMissionNodeIdx(_mission) + 1; // Move to next node index
 
-[_group, true, (_travelNodes select (count _travelNodes - 1))] spawn Sim_fnc_fireMission ;
+[_group, true, true, (_travelNodes select (count _travelNodes - 1))] call Sim_fnc_fireMission ;
+
+if (([_group] call Sim_fnc_isLastMissionNode)) then {
+	_exit = true ; // not enough nodes to move, already at destination
+};
+
+private _now = dateToNumber date ; 
 
 while {!_exit} do {
 	// Handle all timers using in world time. If any time change is made then this will impact missions, but hopefully in a more realistic way
-	private _now = dateToNumber date ; 
+	_now = dateToNumber date ; 
 	
 	_mission = getGroupMission(_group) ;
-	diag_log format["DoDeploy: Running mission %1", _mission] ;
+	//diag_log format["DoDeploy: Running mission %1", _mission] ;
 	// If the mission has changed in any way then exit the mission now 
 	if (count _mission == 0 || getMissionID(_mission) != "Deploy") exitWith {_exit = true};
 	
-	// if not at the destination then
-	//   look at the path from current index to next index location
-	//   has enough time elapsed to move to next path position?
-	//   if there is another position in the path
-	//     move to next path coordinate. Set this against the group location
-	//   else move index to next node and set coordinates to [0,0,0] in group
+	if (!([_group] call Sim_fnc_isLastMissionNode)) then {
+		private _node = _graph get (_travelNodes select _idx);
+		private _owner = _node get "owner" ;
+		
+		// Check destination for enemy capture
+		if (([getGroupSide(_group), _owner] call BIS_fnc_sideIsEnemy) && !_abort) then {
+			//diag_log format ["DoDeploy: aborting as travel destination node %1 is enemy for group %2", _travelNodes select _idx, getGroupID(_group)] ;
+			// cancel mission and re-evaluate
+			// Work back to last node
+			_abort = true ;
+			[_group, _graph] call Sim_fnc_abortMission ;
+			_travelNodes = getDeployMissionNodes(_mission) ;
+			_pathIdx = -1 ; // reset index
+			_idx = 1 ;
+		}else{
+			// Check for first run and setup the path index to follow
+			if (_pathIdx < 0) then {
+				_path = [_group, _graph] call Sim_fnc_getPathFromTo ;
+				_currentPos = getGroupPosition(_group) ;
+				if (!([_currentPos] call Sim_fnc_isNullPosition)) then {
+					// No path index and group has a coordinate, establish the path step to resume on
+					_pathIdx = [_graph, (_travelNodes select _idx - 1), (_travelNodes select _idx), _currentPos] call Sim_fnc_findClosestPathCoord ; // Helper func - getDeployMissionNode(mission, index)
+				}else{
+					_pathIdx = 0 ; // Group is at the node so start from first path marker
+				};
+				//diag_log format["DoDeploy: %1 starting new path to %2, at _pathIdx %3", getGroupID(_group), _travelNodes select (_idx + 1), _pathIdx] ;
+			}else{  // Not the first time setup code
+				if (_pathIdx == 0 && _idx > 0) then {
+					//diag_log format ["DoDeploy: Leaving node index %1 for node %2", _idx - 1, _travelNodes select _idx];
+					[_group, (_travelNodes select (_idx - 1)), false] spawn Sim_fnc_fireNodeGroupChange ; // leaving node
+				};
+				_pathIdx = _pathIdx + 1; // Increment path index to move
+				if (_pathIdx < (count _path)) then { // Helper func - is at end of path?
+					// Take a step
+					//diag_log format["DoDeploy: %1 moving to %2", getGroupID(_group), _path select _pathIdx] ;
+					setGroupPosition(_group, _path select _pathIdx) ;
+				}else{
+					// New node
+					//diag_log format["DoDeploy: %1 arrived at %2", getGroupID(_group), (_travelNodes select _idx)] ;
+					[_group, (_travelNodes select _idx), true] spawn Sim_fnc_fireNodeGroupChange ;
 
-	_idx = getDeployMissionNodeIdx(_mission) ;
-  // Check destination for enemy capture
-  private _node = _graph get (_travelNodes select _idx);
-  private _owner = _node get "owner" ;
-  if ([getGroupSide(_group), _owner] call BIS_fnc_sideIsEnemy) then {
-    // cancel mission and re-evaluate
-    _exit = true ;
-  }else{
-    if (_idx < (count _travelNodes - 1)) then {
-      // Check for first run and setup the path index to follow
-      if (_pathIdx < 0) then {
-        _path = getPathArray(((_graph get (_travelNodes select _idx)) get "paths") get(_travelNodes select (_idx + 1))) ; // setup the path
-        _currentPos = getGroupPosition(_group) ;
-        if (!([_currentPos] call Sim_fnc_isNullPosition)) then {
-          // No path index and group has a coordinate, establish the path step to resume on
-          _pathIdx = [_graph, (_travelNodes select _idx), (_travelNodes select (_idx +1)), _currentPos] call Sim_fnc_findClosestPathCoord ;
-        }else{
-          _pathIdx = 0 ;
-        };
-        diag_log format["DoDeploy: %1 starting new path to %2, at _pathIdx %3", getGroupID(_group), _travelNodes select (_idx + 1), _pathIdx] ;
-        [_group] spawn Sim_fnc_fireGroupMoveChange ;
-      }else{  // Not the first time setup code
-        _pathIdx = _pathIdx + 1;
-        if (_pathIdx < (count _path)) then {
-          // Take a step
-          diag_log format["DoDeploy: %1 moving to %2", getGroupID(_group), _path select _pathIdx] ;
-          setGroupPosition(_group, _path select _pathIdx) ;
-          [_group] spawn Sim_fnc_fireGroupMoveChange ;
-        }else{
-          // New node
-          diag_log format["DoDeploy: %1 moving to new node", getGroupID(_group)] ;
-          [_group, (_travelNodes select _idx), true] spawn Sim_fnc_fireNodeGroupChange ;
-          
-          // To Do: Determine what should happen if this is enemy???
-          if (_owner == civilian) then {
-            sleep 60 ; // capture time
-            _node set ["owner", getGroupSide(_group)] ;
-            [_group, (_travelNodes select _idx), civilian] spawn Sim_fnc_fireNodeCapture;
-          }; 
-          _pathIdx = -1;
-          setGroupPosition(_group, []) ;
-          _idx = _idx + 1;
-          setDeployMissionNodeIdx(_mission, _idx) ;
-          setDeployMissionTimestamp(_mission, _now) ;
-          setGroupNode(_group, (_travelNodes select _idx));
-        };
-      };
-    }else{
-      // At the destination - has the mission timed out?
-      diag_log format["DoDeploy: %1 at destination node %2", getGroupID(_group), _travelNodes select (count _travelNodes - 1)] ;
-      setGroupNode(_group, (_travelNodes select (count _travelNodes - 1)));
-      [_group] spawn Sim_fnc_fireGroupMoveChange ;
-      if (_now > (_finalTimeout + getDeployMissionTimestamp(_mission))) then {
-        _exit = true ;
-      };
-    };
+					_pathIdx = -1; // indicate a new path is needed
+					setGroupPosition(_group, []) ; // Helper fnc - reset position
+					setGroupNode(_group, (_travelNodes select _idx ));
+
+					// To Do: Determine what should happen if this is enemy??? Although the checks above stop travel to enemy
+					_groupOwner = getGroupSide(_group);
+					diag_log format["DoDeploy: Group %1 on side %2 passing through node %3, owned by %4", getGroupID(_group), _groupOwner, _travelNodes select _idx , _owner];
+					if (_owner != _groupOwner) then {
+						//diag_log format["DoDeploy: Group %1 on side %2 capturing node %3, owned by %4", getGroupID(_group), _groupOwner, _travelNodes select _idx, _owner];
+						[_group] spawn Sim_fnc_fireGroupMoveChange ;
+						setDeployMissionTimestamp(_mission, _now) ;
+						// Wait until node is captured early by own side or capture timeout reached
+						waitUntil {sleep 1; _now = dateToNumber date ;(_node get "owner") == _groupOwner || _now > (_captureTimeout + getDeployMissionTimestamp(_mission));} ;
+						if ((_node get "owner") != _groupOwner) then {
+							diag_log format["DoDeploy: Group %1 on side %2 captured node %3, owned by %4", getGroupID(_group), _groupOwner, _travelNodes select _idx , _owner];
+							[_group, (_travelNodes select _idx)] spawn Sim_fnc_fireNodeCapture;
+						};
+					}; 
+					
+					// Set the index to now be the current index node as the group has arrived
+					setDeployMissionNodeIdx(_mission, _idx) ;
+					setDeployMissionTimestamp(_mission, _now) ;
+					
+					_idx = _idx + 1;
+				};
+			};
+		};
+	}else{
+		// At the destination
+		private _finalNodeId = _travelNodes select getDeployMissionNodeIdx(_mission);
+		private _node = _graph get _finalNodeId ;
+		private _owner = _node get "owner" ;
+		diag_log format["DoDeploy: %1 at final destination node %2", getGroupID(_group), _finalNodeId] ;
+		setGroupPosition(_group, []) ;
+		setGroupNode(_group, _finalNodeId);
+		
+		diag_log format["Fire capture and group change at index %1, max node count %2, firing node %3", getDeployMissionNodeIdx(_mission), count _travelNodes, _finalNodeId] ;
+		[_group, _finalNodeId, true] spawn Sim_fnc_fireNodeGroupChange ;
+		setDeployMissionTimestamp(_mission, _now) ;
+		_groupOwner = getGroupSide(_group);
+		// Wait until node is captured early by own side or capture timeout reached
+		waitUntil {sleep 1; _now = dateToNumber date ;(_node get "owner") == _groupOwner || _now > (_captureTimeout + getDeployMissionTimestamp(_mission));} ;
+		if ((_node get "owner") != _groupOwner) then {
+			diag_log format["DoDeploy: Group %1 on side %2 captured node %3, owned by %4", getGroupID(_group), _groupOwner, _finalNodeId, _owner];
+			[_group, _finalNodeId] spawn Sim_fnc_fireNodeCapture;
+		};
+		
+		_exit = true ;
 	};
+	[_group] spawn Sim_fnc_fireGroupMoveChange ;
+
 	sleep 1 ; // avoid overloading the scheduler
 };
+[_group] spawn Sim_fnc_fireGroupMoveChange ;
+setDeployMissionTimestamp(_mission, _now) ;
 
-[_group, false, (_travelNodes select (count _travelNodes - 1))] spawn Sim_fnc_fireMission ;
-setGroupMission(_group,[]) ; // make available for new missions
+if (!_abort) then {
+	waitUntil{sleep 10; _now = dateToNumber date ; _now > (_finalTimeout + getDeployMissionTimestamp(_mission));};
+};
+
+[_group, false, !_abort, (_travelNodes select getDeployMissionNodeIdx(_mission))] spawn Sim_fnc_fireMission ;
+
+[_group] call Sim_fnc_removeMission ; // Clear the mission from group

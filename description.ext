@@ -22,11 +22,13 @@ class CfgFunctions
 			class graphToClipboard{} ;
 			class loadGraph{};
 			class displayRoute{} ;
+			class displaySideMap{} ;
 		};
 		class location
 		{
 			class allLocations{};
 			class setLocationNode{};
+			class getMapAirports{};
 		};
 		class graph
 		{
@@ -40,15 +42,15 @@ class CfgFunctions
 		};
 		class groups
 		{
-		  class createGroup{} ;
-		  class getAllGroups{} ;
-		  class getSideGroups{};
-		  class getGroup{};
-		  class assignID{} ;
-		  class isGroupMoving{};
-		  class hasMission{} ;
-		  class isNullPosition{};
-		  class getGroupPosition{};
+			class createGroup{} ;
+			class getAllGroups{} ;
+			class getSideGroups{};
+			class getGroup{};
+			class assignID{} ;
+			class isGroupMoving{};
+			class hasMission{} ;
+			class isNullPosition{};
+			class getGroupPosition{};
 		};
 		class logic
 		{
@@ -58,13 +60,17 @@ class CfgFunctions
 			class getSideGraph{} ;
 			class fireNodeGroupChange{};
 			class fireGroupMoveChange{};
-      class fireNodeCapture{} ;
+			class fireNodeCapture{} ;
 			class fireMission{} ;
 		};
 		class mission
 		{
 			class createMission{};
 			class doDeployMission{};
+			class removeMission{} ;
+			class isLastMissionNode{} ;
+			class getPathFromTo{} ;
+			class abortMission{} ;
 		};
 	};
 };

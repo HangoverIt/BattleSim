@@ -26,7 +26,7 @@ private _pos = [_group] call Sim_fnc_getGroupPosition ;
 private _mkrid = format["_grp%1%2",getGroupID(_group),_side];
 private _mkr = createMarkerLocal [_mkrid, _pos] ;
 _mkr = _mkrid;
-diag_log format["Creating group %1 marker at %2 name %3", getGroupID(_group), _pos, _mkr] ;
+//diag_log format["Creating group %1 marker at %2 name %3", getGroupID(_group), _pos, _mkr] ;
 
 _mkr setMarkerShapeLocal "ICON" ;
 _mkr setMarkerTypeLocal "n_armor";

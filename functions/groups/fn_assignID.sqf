@@ -11,7 +11,7 @@
     HashMap
 */
 params["_side"] ;
-_grpids = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscer", "Papa", "Quebeq", "Romeo", "September", "Tango", "Uniform", "Victor", "Wiskey", "X-Ray", "Yankiee", "Zulu"];
+_grpids = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebeq", "Romeo", "September", "Tango", "Uniform", "Victor", "Wiskey", "X-Ray", "Yankiee", "Zulu"];
 
 _grpid = _grpids select 0 ;
 
