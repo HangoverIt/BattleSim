@@ -3,6 +3,7 @@
 #define CREATESIDESTATS missionNamespace setVariable [SIDESTATS, createHashMap]
 
 // Define all score modifiers here
+#define SIM_NODE_MISSION						1
 #define SIM_NODE_CAPTURED 						2
 #define SIM_NODE_CONNECTED 						1
 #define SIM_NODE_ENEMY_CONNECTED				1

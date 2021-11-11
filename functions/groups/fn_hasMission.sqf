@@ -13,10 +13,10 @@
 #include "..\groups\groups.hpp"
 params["_group"];
 
-_mission = getGroupMission(_grp);
+_mission = getGroupMission(_group);
 
-if (count _mission == 0) exitWith {
-	// No mission set - empty array
+if ([_mission] call Sim_fnc_isNullMission) exitWith {
+	// No mission set
 	false ;
 };
 

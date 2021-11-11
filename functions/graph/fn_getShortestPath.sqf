@@ -4,12 +4,13 @@
 	Description:
 		Get the shortest path between 2 nodes in a graph.
 		Use a Dijkstra algorithm to find the path.
+		The side attribute is used to determine if a node is enemy owned. Enemy owned nodes will not be routed through
 
 	Parameter(s):
 		1: Graph
 		2: Starting node ID
 		3: Destination node ID
-		4: Side of unit moving (does nothing at the moment)
+		4: Side of unit moving
 
 	Returns:
 		Mission array
@@ -46,21 +47,24 @@ while {_currentNodeID != _b} do{
 
 	{
 		_lookAtNode = _allNodes get _x ;
-		if (!isNodeVisited(_lookAtNode)) then { // Only process unvisited nodes
-			_dis = getPathDistance(_y) + _currentDis;
-			_prevNode = _currentNodeID;
-			// Does node already have a distance?
-			if (getNodeDistance(_lookAtNode) != -1 && getNodeDistance(_lookAtNode) < _dis) then { // Retain smaller distance info				
-				_dis = getNodeDistance(_lookAtNode) ; // retain
-				_prevNode = getPreviousNode(_lookAtNode); // retain last node
+		_owner = (_graph get _x) get "owner" ;
+		if !([_side, _owner] call BIS_fnc_sideIsEnemy) then { // Only process nodes that are not enemy owned
+			if (!isNodeVisited(_lookAtNode)) then { // Only process unvisited nodes
+				_dis = getPathDistance(_y) + _currentDis;
+				_prevNode = _currentNodeID;
+				// Does node already have a distance?
+				if (getNodeDistance(_lookAtNode) != -1 && getNodeDistance(_lookAtNode) < _dis) then { // Retain smaller distance info				
+					_dis = getNodeDistance(_lookAtNode) ; // retain
+					_prevNode = getPreviousNode(_lookAtNode); // retain last node
+				};
+				if (getNodeDistance(_lookAtNode) == -1) then {
+					// Add new node to potential visit nodes
+					_toVisitNodes pushBack [_dis, _x];
+					//diag_log format ["Adding a node %1 to visit with distance %2. Total nodes to visit %3", _x, _dis, count _toVisitNodes] ;
+				};
+				// Update record of node
+				_allNodes set [_x, [_dis, false, _prevNode]] ;
 			};
-			if (getNodeDistance(_lookAtNode) == -1) then {
-				// Add new node to potential visit nodes
-				_toVisitNodes pushBack [_dis, _x];
-				//diag_log format ["Adding a node %1 to visit with distance %2. Total nodes to visit %3", _x, _dis, count _toVisitNodes] ;
-			};
-			// Update record of node
-			_allNodes set [_x, [_dis, false, _prevNode]] ;
 		};
 	}forEach _paths ;
 	

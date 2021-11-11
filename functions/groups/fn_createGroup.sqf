@@ -27,4 +27,10 @@ _id = [_side] call Sim_fnc_assignID ;
 // Graph position, Mission, State, Group Composition, spawned group array, actual location (optional), side
 _grps set[_id, [_id, _graphid, [], "stopped", _template, [], [0,0,0], _side]];
 
+// Get new group and fire the node group change
+_newGrp = [_side, _id] call Sim_fnc_getGroup ;
+if (!isNil "_newGrp") then {
+	[_newGrp, _graphid, true] call Sim_fnc_fireNodeGroupChange ;
+};
+
 true ;

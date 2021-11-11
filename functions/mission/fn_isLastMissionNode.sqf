@@ -17,6 +17,8 @@
 params["_group", ["_nodeidx", -1]] ;
 
 private _mission = getGroupMission(_group);
+if ([_mission] call Sim_fnc_isNullMission) exitWith {["fn_isLastMissionNode: null mission provided. Trace %1", diag_stacktrace] call BIS_fnc_error; true;};
+
 private _travelNodes = getDeployMissionNodes(_mission) ;
 private _idx = getDeployMissionNodeIdx(_mission) ;
 

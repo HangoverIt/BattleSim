@@ -13,7 +13,7 @@
 */
 params["_side", "_id"];
 
-private _grp = Nil ;
+private _grp = nil ;
 private _grps = [_side] call Sim_fnc_getSideGroups ;
 
 if (!(isNil "_grps")) then {

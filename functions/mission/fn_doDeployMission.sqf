@@ -9,7 +9,7 @@
 		1. Group
     
 	Returns:
-		Nothing
+		Bool
 */
 #include "..\groups\groups.hpp"
 #include "..\mission\mission.hpp"
@@ -21,6 +21,8 @@ private _exit = false ;
 private _abort = false ;
 private _finalTimeout = 5 * _min; // minutes
 private _captureTimeout = 1 * _min ; // minutes
+
+if !([_group] call Sim_fnc_hasMission) exitWith {["fn_doDeployMission: null mission provided. Trace %1", diag_stacktrace] call BIS_fnc_error; false;};
 
 // Setup and resume from mission settings
 private _mission = getGroupMission(_group);
@@ -121,7 +123,7 @@ while {!_exit} do {
 		private _finalNodeId = _travelNodes select getDeployMissionNodeIdx(_mission);
 		private _node = _graph get _finalNodeId ;
 		private _owner = _node get "owner" ;
-		diag_log format["DoDeploy: %1 at final destination node %2", getGroupID(_group), _finalNodeId] ;
+		diag_log format["DoDeploy: %1 %2 at final destination node %3", getGroupID(_group), getGroupSide(_group), _finalNodeId] ;
 		setGroupPosition(_group, []) ;
 		setGroupNode(_group, _finalNodeId);
 		
@@ -152,3 +154,5 @@ if (!_abort) then {
 [_group, false, !_abort, (_travelNodes select getDeployMissionNodeIdx(_mission))] spawn Sim_fnc_fireMission ;
 
 [_group] call Sim_fnc_removeMission ; // Clear the mission from group
+
+true ;

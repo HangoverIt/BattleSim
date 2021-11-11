@@ -23,6 +23,7 @@ class CfgFunctions
 			class loadGraph{};
 			class displayRoute{} ;
 			class displaySideMap{} ;
+			class carrier{};
 		};
 		class location
 		{
@@ -67,10 +68,12 @@ class CfgFunctions
 		{
 			class createMission{};
 			class doDeployMission{};
+			class doHoldMission{} ;
 			class removeMission{} ;
 			class isLastMissionNode{} ;
 			class getPathFromTo{} ;
 			class abortMission{} ;
+			class isNullMission{};
 		};
 	};
 };
