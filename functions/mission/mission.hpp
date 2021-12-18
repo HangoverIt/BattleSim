@@ -1,3 +1,5 @@
+#define nullMission []
+
 #define getMissionID(mission) (mission select 0)
 
 #define getDeployMissionNodes(m) (m select 1)

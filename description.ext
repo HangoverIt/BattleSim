@@ -52,6 +52,16 @@ class CfgFunctions
 			class hasMission{} ;
 			class isNullPosition{};
 			class getGroupPosition{};
+			class getFactionSides{};
+			class getStartNode{};
+		};
+		class groupinfo
+		{
+			class createDefaultTemplate{};
+			class createGroupInfoVehicle{};
+			class getVehicleGroupInfo{};
+			class getUnitGroupInfo{};
+			class createGroupInfoUnit{};
 		};
 		class logic
 		{

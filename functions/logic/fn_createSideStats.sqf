@@ -19,8 +19,10 @@ if (isNil SIDESTATS) then {
 };
 private _sidestats = SIDESTATSVAR;
 
-// Create stats for both sides
-_sidestats set [west, [_graph, west, "Pyrgos[16780.6,12604.5,-18.9913]"] call Sim_fnc_graphStats] ;
-_sidestats set [east, [_graph, east, "Kavala[3458.95,12966.4,-6.1822]"] call Sim_fnc_graphStats] ;
+// Create stats for all factions
+{
+	_start = [_x] call Sim_fnc_getStartNode;
+	_sidestats set [_x, [_graph, _x, _start] call Sim_fnc_graphStats] ;
+} foreach ([] call Sim_fnc_getFactionSides);
 
 _sidestats ;

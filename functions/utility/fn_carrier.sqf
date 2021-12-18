@@ -34,6 +34,10 @@ _plane disableAI "PATH";
 
 _plane setFuel 0;
 _plane engineOn false;
+ 
+_FX_smoke_source = "#particlesource" createVehicleLocal (_catapult select 1); 
+_FX_smoke_source setParticleClass "RifleAssaultCloud2"; 
+//FX_smoke_source attachto [_object,[0,0,0]]; 
 
 sleep 10;
 
@@ -57,6 +61,7 @@ while { time < _timer } do {
    sleep 0.1;
 };
 
+deleteVehicle _FX_smoke_source;
 
 _plane setPosASL (_catapult select 1);
 [_plane, 0, 0] call BIS_fnc_setPitchBank;

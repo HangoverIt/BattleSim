@@ -31,7 +31,7 @@ if (_side == _lastowner) exitWith {diag_log format["Node %1 is already owned by 
 // Process the capture
 _node set ["owner", _side] ;
 
-private _impactside = [east,west,resistance];
+private _impactside = [] call Sim_fnc_getFactionSides;
 
 // Modify all side graphs for the captured node
 {

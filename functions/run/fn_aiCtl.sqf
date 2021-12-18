@@ -18,19 +18,18 @@ private _graph = SIMGRAPHVAR ;
 // TO DO - load in side stats from previous save
 [_graph] call Sim_fnc_createSideStats ;
 
-private _eastStart = "Kavala[3458.95,12966.4,-6.1822]";
-private _westStart = "Pyrgos[16780.6,12604.5,-18.9913]";
-
-(_graph get _eastStart) set ["owner", east] ;
-(_graph get _westStart) set ["owner", west] ;
+// Set the start node and make it owned by the starting side
+{
+	_start = [_x] call Sim_fnc_getStartNode;
+	(_graph get _start) set ["owner", _x] ;
+} foreach ([] call Sim_fnc_getFactionSides);
 
 while {true} do {
-	if ([west] call Sim_fnc_redeployGroups) then {
-		[west, [], _westStart] call Sim_fnc_createGroup ; // TO DO - add config for start node for both sides
-	};
-	if ([east] call Sim_fnc_redeployGroups) then {
-		[east, [], _eastStart] call Sim_fnc_createGroup ; // TO DO - add config for start node for both sides
-	};
+	{
+		if ([_x] call Sim_fnc_redeployGroups) then {
+			[_x, [], [_x] call Sim_fnc_getStartNode] call Sim_fnc_createGroup ; 
+		};
+	} foreach ([] call Sim_fnc_getFactionSides);
 
 	_sides = [] call Sim_fnc_getAllGroups ;
 	{

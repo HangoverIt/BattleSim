@@ -2,7 +2,8 @@
 	Author: HangoverIt
 
 	Description:
-		Determine if the graph requires a new group deployment. Returns true until enough are deployed and available
+		Determine if the graph requires a new recon group deployment. 
+		Returns true until enough are deployed and available
 
 	Parameter(s):
 		1: Side to assess if redeployment required
