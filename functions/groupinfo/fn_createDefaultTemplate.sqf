@@ -16,7 +16,8 @@ params["_side","_name"];
 
 private _ret = [] ;
 private _ID = toLower _name;
-// Template: [Vehicles, Units]
+// Template: [ID, Vehicles, Units]
+// ID: string
 // Vehicles: [[class, Magazines, Damage, fuel, Units]]
 // Damage: [[hitPointName, Damage]]
 // Units: [[class, Damage, role]] - see assignedVehicleRole for roles
@@ -27,6 +28,7 @@ private _ID = toLower _name;
 
 _reconTemplate = 
 [
+	"recon",
 	[ // Vehicles
 		["B_LSV_01_armed_F", [], [], 1,[["B_Soldier_F",[],["driver"]], ["B_Soldier_F",[],["turret",[0]]], ["B_Soldier_F",[],["turret",[1]]]]], 
 		["B_LSV_01_armed_F", [], [], 1,[["B_Soldier_F",[],["driver"]], ["B_Soldier_F",[],["turret",[0]]], ["B_Soldier_F",[],["turret",[1]]]]]
@@ -40,6 +42,7 @@ _reconTemplate =
 
 _airTemplate =
 [
+	"air",
 	[ // Vehicles
 		["B_Plane_Fighter_01_F", [], [], 1, [ ["B_Fighter_Pilot_F",[],["driver"]] ] ]
 	],
@@ -48,6 +51,7 @@ _airTemplate =
 
 _heavyTemplate =
 [
+	"assault",
 	[ // Vehicles
 		["B_LSV_01_armed_F", [], [], 1,[["B_Soldier_F",[],["driver"]], ["B_Soldier_F",[],["turret",[0]]], ["B_Soldier_F",[],["turret",[1]]]]], 
 		["B_LSV_01_armed_F", [], [], 1,[["B_Soldier_F",[],["driver"]], ["B_Soldier_F",[],["turret",[0]]], ["B_Soldier_F",[],["turret",[1]]]]]
@@ -61,6 +65,7 @@ _heavyTemplate =
 
 _infantryTemplate =
 [
+	"infantry",
 	[ // Vehicles
 
 	],
@@ -92,6 +97,9 @@ if (_side == west) then {
 		default {_infantryTemplate};
 	};
 };
+
+_ret set [0, _ID] ; // Set the name provided for template
+
 _ret ;
 
 

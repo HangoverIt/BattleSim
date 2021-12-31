@@ -6,7 +6,7 @@
 #define getGroupNode(grp) (grp select 1)
 #define getGroupMission(grp) (grp select 2)
 #define getGroupState(grp) (grp select 3)
-#define getGroupTemplate(grp) (grp select 4)
+#define getGroupInfo(grp) (grp select 4)
 #define getGroupObjects(grp) (grp select 5)
 #define getGroupPosition(grp) (grp select 6)
 #define getGroupSide(grp) (grp select 7)

@@ -2,82 +2,56 @@
 	Author: HangoverIt
 
 	Description:
-		Create a new mission and set to the group (also returns the mission set)
+		Procedure to check for new missions and create if units available
 
 	Parameter(s):
-		1: Battle group to create the mission
-		2: Main graph
-		3: side
+		None
 	Returns:
-		Mission array
+		Boolean
 */
 #include "..\groups\groups.hpp"
 #include "..\mission\mission.hpp"
-params["_group", "_graph", "_side"] ;
 
-private _operationalRange = 10000 ; // m
+private _missionHandlers = [] call Sim_fnc_getMissionHandlers ;
 
-private _grpNode = _graph get getGroupNode(_group) ;
-private _currentMission = getGroupMission(_group) ;
-if (count _currentMission != 0) exitWith {
-	_currentMission ; // already has a mission so just return the one set
-};
-
-// Set default mission
-// Mission identifier, last change
-_currentMission = ["Hold", dateToNumber date] ;
-
-private _sideGraph = [_side] call Sim_fnc_getSideGraph;
-
-// Get all scores from the side graph and order from smallest to largest (pop stack of locations)
-// Side graph needed as scores are based on preferences for each side
-//diag_log format ["Create Mission: side graph is type %1, values %2", typeName _sideGraph, _sideGraph] ;
-private _grpPos = _grpNode get "position" ;
-private _scores = [];
 {
-	// only consider nodes with certain raidus of unit to keep movements within an operational range
-	_node = _graph get _x ;
-	if ((_node get "position" distance2D _grpPos) <= _operationalRange) then {
-		//diag_log format ["Create Mission: side graph item %1, with data %2", _x,_y] ;
-		_scores pushBack [_y get "score",_x];
-	};
-}forEach _sideGraph ;
+	_side = _x ;
 
-_scores sort true ; // Sort smallest to largest locations
-
-if (count _scores > 0) then {
-	// Create deploy mission
-	_nodePath = [] ;
-	// Try all scored nodes
-	while {count _nodePath == 0 && count _scores > 0} do {
-		_deployTo = (_scores select (count _scores -1)) select 1 ;
-		_nodePath = [_graph, getGroupNode(_group), _deployTo] call Sim_fnc_getShortestPath ;
-		if (count _nodePath == 0) then {
-			_scores deleteAt (count _scores -1);
+	// Is a new mission needed?
+	{
+		_missionType = _y;
+		_missionFinder = getConfigMissionFind(_x) ;
+		_missionExec = getConfigMissionRun(_x) ;
+		_mission = [_graph, _side, _missionType] call _missionFinder ;
+		if !([_mission] call isNullMission) then {
+			_unitType = [_mission, _side] call Sim_fnc_getAvailableUnitForMission ;
+			if (_unitType != "") then {
+				_newGrp = [_side, [_side,_unitType] call Sim_fnc_createDefaultTemplate, [_side] call Sim_fnc_getStartNode] call Sim_fnc_createGroup ; 
+				setGroupMission(_newGrp,_mission) ;
+				[_newGrp, _graph] spawn _missionExec ;
+			};
 		};
-	};
-	// TO DO - take a look at scores at this point. The score may be really low and other missions better than deploy!
-	if (count _nodePath > 0) then {
-		// Mission identifier, nodes to travel, index of current node, last change (update waypoints) time
-		//diag_log format["Create mission: Chosen score %1 at location %2 for side %3, path %4", (_scores select (count _scores -1)) select 0, (_scores select (count _scores -1)) select 1, _side, _nodePath] ;
-		_currentMission = ["Deploy", _nodePath, 0, dateToNumber date];
-	};
-};
+	}forEach _missionHandlers ;
+} foreach ([] call Sim_fnc_getFactionSides);
 
-//////////////////////////////////////////////////
-//
-//  Do the final mission setup here after 
-//  assessing all the scores and making final mission 
-//  decision
-//
-setGroupMission(_group,_currentMission) ;
+_sides = [] call Sim_fnc_getAllGroups ;
+{
+	_side = _x ;
+	_groups = _y ;
 
-switch (getMissionID(_currentMission)) do {
-	case "Deploy": {[_group, _graph] spawn Sim_fnc_doDeployMission;};
-	case "Hold": {[_group, _graph] spawn Sim_fnc_doHoldMission;} ;
-	default {} ;
-};
+	{
+		_grpid = _x ;
+		_grp = _y ;
+		if(!([_grp] call Sim_fnc_hasMission)) then {
+			{
+				_missionType = _y;
+				_missionFinder = getConfigMissionFind(_x) ;
+				_missionExec = getConfigMissionRun(_x) ;
+				_mission = [_graph, _side, _missionType, _grp] call _missionFinder ; // Mission finder will set the mission to the group
+				[_grp, _graph] spawn _missionExec ;
+			}forEach _missionHandlers ;
+		};
+	}forEach _groups ;
+}forEach _sides ;
 
-
-_currentMission;
-
+true;

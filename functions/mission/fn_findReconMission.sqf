@@ -2,37 +2,51 @@
 	Author: HangoverIt
 
 	Description:
-		
+		Check if a valid recon mission is available for an existing group (if set) 
+		or if there's an available mission for a new group (if not set)
 
 	Parameter(s):
-		
+		1. Graph - game graph with all location nodes
+		2. Side - side to check or set mission
+		3. MissionName - string of mission identifer - set externally through config
+		3. Group (optional) - Battlesim group array to check for mission
 	Returns:
-		Array of [Group, Mission]
+		Array of Mission or nullMission (see mission.hpp)
 */
 #include "..\groups\groups.hpp"
 #include "..\graph\graph.hpp"
 #include "..\pool\pool.hpp"
 #include "..\mission\mission.hpp"
-params["_graph", "_sidePool", "_sideGraph", "_sideGroups"]
+#include "..\config\config.hpp"
+params["_graph", "_side", "_missionName", "_group"]
 
 private _operationalRange = 10000 ; // m
 
-private _grpNode = _graph get getGroupNode(_group) ;
-private _currentMission = getGroupMission(_group) ;
-if (count _currentMission != 0) exitWith {
-	_currentMission ; // already has a mission so just return the one set
+private _grpSet = !(isNil "_group") ;
+private _grpNode = _graph get ([_side] call Sim_fnc_getStartNode) ;
+
+// If a group was passed to the function then check if a mission already exists and set
+// the group variables.
+if (_grpSet) then {
+	if ([_group] call Sim_fnc_hasMission) exitWith {nullMission} ; // Group has a mission - exit
+	_grpNode = _graph get getGroupNode(_group) ;
+	_grpMissions = [_group] call Sim_fnc_availableGroupMissions ;
+	if !(_missionName in _grpMissions) exitWith {nullMission} ; // Group doesn't support this mission - exit
+}else{
+	// No group set, should a mission be deployed?
+	_deploy = [_missionName, _side] call Sim_fnc_deployNewGroup ;
+	if (!_deploy) exitWith {nullMission} ;
 };
+private _grpPos = _grpNode get "position" ;
+private _sideGraph = [_side] call Sim_fnc_getSideGraph;
 
-// Set default mission
-// Mission identifier, last change
-_currentMission = ["Hold", dateToNumber date] ;
-
-
+// Set null mission
+private _currentMission = [] ;
 
 // Get all scores from the side graph and order from smallest to largest (pop stack of locations)
 // Side graph needed as scores are based on preferences for each side
 //diag_log format ["Create Mission: side graph is type %1, values %2", typeName _sideGraph, _sideGraph] ;
-private _grpPos = _grpNode get "position" ;
+
 private _scores = [];
 {
 	// only consider nodes with certain raidus of unit to keep movements within an operational range
@@ -60,7 +74,7 @@ if (count _scores > 0) then {
 	if (count _nodePath > 0) then {
 		// Mission identifier, nodes to travel, index of current node, last change (update waypoints) time
 		//diag_log format["Create mission: Chosen score %1 at location %2 for side %3, path %4", (_scores select (count _scores -1)) select 0, (_scores select (count _scores -1)) select 1, _side, _nodePath] ;
-		_currentMission = ["Deploy", _nodePath, 0, dateToNumber date];
+		_currentMission = [_missionName, _nodePath, 0, dateToNumber date];
 	};
 };
 
@@ -70,14 +84,8 @@ if (count _scores > 0) then {
 //  assessing all the scores and making final mission 
 //  decision
 //
-setGroupMission(_group,_currentMission) ;
-
-switch (getMissionID(_currentMission)) do {
-	case "Deploy": {[_group, _graph] spawn Sim_fnc_doDeployMission;};
-	case "Hold": {[_group, _graph] spawn Sim_fnc_doHoldMission;} ;
-	default {} ;
+if (_grpSet) then {
+	setGroupMission(_group,_currentMission) ;
 };
-
-
 _currentMission;
 

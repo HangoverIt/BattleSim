@@ -4,6 +4,7 @@
 	Description:
 		Determine if the graph requires a new recon group deployment. 
 		Returns true until enough are deployed and available
+		<old - remove>
 
 	Parameter(s):
 		1: Side to assess if redeployment required

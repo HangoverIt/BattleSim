@@ -54,6 +54,8 @@ class CfgFunctions
 			class getGroupPosition{};
 			class getFactionSides{};
 			class getStartNode{};
+			class availableGroupMissions{};
+			class deployNewGroup{} ;
 		};
 		class groupinfo
 		{
@@ -84,6 +86,20 @@ class CfgFunctions
 			class getPathFromTo{} ;
 			class abortMission{} ;
 			class isNullMission{};
+			class unitsSupportingMission{};
+		};
+		class config
+		{
+			class getConfig{};
+			class getMissionHandlers{}; 
+			class initConfig{};
+		};
+		class pool
+		{
+			class getAllPools{};
+			class getAvailableUnitForMission{};
+			class getSidePool{} ;
+			class initPool{};
 		};
 	};
 };
