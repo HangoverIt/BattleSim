@@ -22,7 +22,7 @@ private _missionType = getMissionID(_mission);
 
 private _sidePool = [_side] call Sim_fnc_getSidePool ;
 
-private _config = [] Sim_fnc_getConfig ;
+private _config = [] call Sim_fnc_getConfig ;
 
 private _supportedMissions = _config get "supported_missions" ;
 if (isNil "_supportedMissions") exitWith {""} ; // config issue, no supported missions found in config
@@ -33,8 +33,8 @@ private _bestFitPriority = -1 ;
 // Establish best fit for the mission (lower index match is better)
 // List will have some mixed priorities whilst the best fit is worked out
 {
-	_missions = _x ;
-	_unitType = _y ;
+	_missions = _y ;
+	_unitType = _x ;
 	_countUnitAvailable = _sidePool get _unitType ;
 	if !(isNil "_countUnitAvailable") then {
 		if (_countUnitAvailable > 0) then {
@@ -63,5 +63,6 @@ private _bestFitPriority = -1 ;
 
 if (count _unitTypes == 0) exitWith {""} ;
 
+diag_log format["DEBUG: GetAvailableUnitForMission returning one of %1", _unitTypes] ;
 // if more than one suitable unit type then select one at random
 selectRandom _unitTypes ;

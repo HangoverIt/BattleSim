@@ -10,11 +10,7 @@
 	Returns:
 		Hashmap of mission handlers
 */
-#include "..\config\config.hpp"
 
-if (isNil SIMCONFIG) then {
-  [] call Sim_fnc_initConfig ;
-};
-private _config = SIMCONFIGVAR;
+_config = [] call Sim_fnc_getConfig ;
 
 _config get "mission_handlers" ;

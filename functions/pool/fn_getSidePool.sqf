@@ -13,7 +13,7 @@
 #include "..\pool\pool.hpp"
 params["_side"] ;
 
-_pools = [] call Sim_getAllPools ;
+_pools = [] call Sim_fnc_getAllPools ;
 
 _sidePool = _pools get _side ;
 

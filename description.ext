@@ -87,6 +87,7 @@ class CfgFunctions
 			class abortMission{} ;
 			class isNullMission{};
 			class unitsSupportingMission{};
+      class findReconMission{};
 		};
 		class config
 		{

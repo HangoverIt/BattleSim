@@ -18,18 +18,20 @@
 #include "..\pool\pool.hpp"
 #include "..\mission\mission.hpp"
 #include "..\config\config.hpp"
-params["_graph", "_side", "_missionName", "_group"]
+params["_graph", "_side", "_missionName", "_group"];
 
 private _operationalRange = 10000 ; // m
 
 private _grpSet = !(isNil "_group") ;
-private _grpNode = _graph get ([_side] call Sim_fnc_getStartNode) ;
+private _grpNodeName = [_side] call Sim_fnc_getStartNode;
+private _grpNode = _graph get _grpNodeName ;
 
 // If a group was passed to the function then check if a mission already exists and set
 // the group variables.
 if (_grpSet) then {
 	if ([_group] call Sim_fnc_hasMission) exitWith {nullMission} ; // Group has a mission - exit
-	_grpNode = _graph get getGroupNode(_group) ;
+  _grpNodeName = getGroupNode(_group);
+	_grpNode = _graph get _grpNodeName ;
 	_grpMissions = [_group] call Sim_fnc_availableGroupMissions ;
 	if !(_missionName in _grpMissions) exitWith {nullMission} ; // Group doesn't support this mission - exit
 }else{
@@ -65,7 +67,7 @@ if (count _scores > 0) then {
 	// Try all scored nodes
 	while {count _nodePath == 0 && count _scores > 0} do {
 		_deployTo = (_scores select (count _scores -1)) select 1 ;
-		_nodePath = [_graph, getGroupNode(_group), _deployTo] call Sim_fnc_getShortestPath ;
+		_nodePath = [_graph, _grpNodeName, _deployTo] call Sim_fnc_getShortestPath ;
 		if (count _nodePath == 0) then {
 			_scores deleteAt (count _scores -1);
 		};
