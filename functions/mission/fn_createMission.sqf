@@ -23,13 +23,13 @@ private _missionHandlers = [] call Sim_fnc_getMissionHandlers ;
 		_missionFinder = getConfigMissionFind(_y) ;
 		_missionExec = getConfigMissionRun(_y) ;
 		_mission = [_graph, _side, _missionType] call _missionFinder ;
-    diag_log format["DEBUG: Creating new mission %1", _mission] ;
+		diag_log format["DEBUG: Creating new mission %1", _mission] ;
 		if !([_mission] call Sim_fnc_isNullMission) then {
 			_unitType = [_mission, _side] call Sim_fnc_getAvailableUnitForMission ;
-      diag_log format["DEBUG: Unit type for mission %1", _unitType] ;
+			diag_log format["DEBUG: Unit type for mission %1", _unitType] ;
 			if (_unitType != "") then {
 				_newGrp = [_side, [_side,_unitType] call Sim_fnc_createDefaultTemplate, [_side] call Sim_fnc_getStartNode] call Sim_fnc_createGroup ; 
-        diag_log format["DEBUG: Creating new group %1", _newGrp] ;
+				diag_log format["DEBUG: Creating new group %1", _newGrp] ;
 				setGroupMission(_newGrp,_mission) ;
 				[_newGrp, _graph] spawn _missionExec ;
 			};

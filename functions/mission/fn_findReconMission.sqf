@@ -76,7 +76,7 @@ if (count _scores > 0) then {
 	if (count _nodePath > 0) then {
 		// Mission identifier, nodes to travel, index of current node, last change (update waypoints) time
 		//diag_log format["Create mission: Chosen score %1 at location %2 for side %3, path %4", (_scores select (count _scores -1)) select 0, (_scores select (count _scores -1)) select 1, _side, _nodePath] ;
-		_currentMission = [_missionName, _nodePath, 0, dateToNumber date];
+		_currentMission = [_missionName, _nodePath, 0, -1, dateToNumber date];
 	};
 };
 

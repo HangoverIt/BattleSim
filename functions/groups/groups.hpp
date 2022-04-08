@@ -13,3 +13,6 @@
 #define setGroupMission(grp,mission) (grp set[2, mission]) 
 #define setGroupPosition(grp,position) (grp set[6, position])
 #define setGroupNode(grp,nodeid) (grp set[1, nodeid])
+
+#define roadMoveComplete(ret) (ret select 0)
+#define roadMoveSafe(ret) (ret select 1)

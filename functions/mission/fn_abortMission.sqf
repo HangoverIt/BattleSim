@@ -35,6 +35,7 @@ if (!([_group] call Sim_fnc_isLastMissionNode) && count _travelNodes > 1) then {
 	diag_log format ["Aborting to route %1", _travelNodes] ;
 	setDeployMissionNodes(_mission, _travelNodes) ;
 	setDeployMissionNodeIdx(_mission, 0) ;
+	setDeployMissionPathIdx(_mission, -1) ;
 	_ret = true ;
 }; 
 
